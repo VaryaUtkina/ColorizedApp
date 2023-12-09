@@ -12,12 +12,7 @@ protocol SettingsViewControllerDelegate: AnyObject {
     func updateBackgroundColor(_ color: UIColor)
 }
 
-class ColorViewController: UIViewController {
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-    }
+final class ColorViewController: UIViewController {
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         let settingsVC = segue.destination as? SettingsViewController

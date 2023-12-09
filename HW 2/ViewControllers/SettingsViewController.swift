@@ -81,10 +81,13 @@ final class SettingsViewController: UIViewController {
     }
     
     private func updateColor() {
-        colorView.backgroundColor = viewBackgroundColor
-        redSlider.value = Float(viewBackgroundColor.cgColor.components?[0] ?? 0)
-        greenSlider.value = Float(viewBackgroundColor.cgColor.components?[1] ?? 0)
-        blueSlider.value = Float(viewBackgroundColor.cgColor.components?[2] ?? 0)
+        let ciColor = CIColor(color: viewBackgroundColor)
+
+        redSlider.value = Float(ciColor.red)
+        greenSlider.value = Float(ciColor.green)
+        blueSlider.value = Float(ciColor.blue)
+        
+        setColor()
     }
     
     private func setColor() {
@@ -101,9 +104,7 @@ final class SettingsViewController: UIViewController {
     }
     
     private func setupToolbar() {
-        let toolbar = UIToolbar(
-            frame: CGRect(x: 0, y: 0, width: view.frame.size.width, height: 44)
-        )
+        let toolbar = UIToolbar()
         let flexibleSpace = UIBarButtonItem(
             barButtonSystemItem: .flexibleSpace,
             target: self,
@@ -119,43 +120,6 @@ final class SettingsViewController: UIViewController {
         redValueTF.inputAccessoryView = toolbar
         greenValueTF.inputAccessoryView = toolbar
         blueValueTF.inputAccessoryView = toolbar
-    }
-}
-
-extension Float {
-    func cgFloat() -> CGFloat {
-        CGFloat(self)
-    }
-}
-
-extension SettingsViewController: UITextFieldDelegate {
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        switch textField {
-        case redValueTF:
-            guard let inputText = checkInputText(redValueTF) else {
-                return
-            }
-            redSlider.setValue(inputText, animated: true)
-            redValueTF.text = String(format: "%.2f", inputText)
-            redLabel.text = string(from: redSlider)
-            setColor()
-        case greenValueTF:
-            guard let inputText = checkInputText(greenValueTF) else {
-                return
-            }
-            greenSlider.setValue(inputText, animated: true)
-            greenValueTF.text = String(format: "%.2f", inputText)
-            greenLabel.text = string(from: greenSlider)
-            setColor()
-        default:
-            guard let inputText = checkInputText(blueValueTF) else {
-                return
-            }
-            blueSlider.setValue(inputText, animated: true)
-            blueValueTF.text = String(format: "%.2f", inputText)
-            blueLabel.text = string(from: blueSlider)
-            setColor()
-        }
     }
     
     private func checkInputText(_ textField: UITextField) -> Float? {
@@ -181,5 +145,40 @@ extension SettingsViewController: UITextFieldDelegate {
         }
         alert.addAction(okAction)
         present(alert, animated:  true)
+    }
+}
+
+extension Float {
+    func cgFloat() -> CGFloat {
+        CGFloat(self)
+    }
+}
+
+extension SettingsViewController: UITextFieldDelegate {
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        switch textField {
+        case redValueTF:
+            guard let inputText = checkInputText(redValueTF) else {
+                return
+            }
+            redSlider.setValue(inputText, animated: true)
+            redValueTF.text = String(format: "%.2f", inputText)
+            redLabel.text = string(from: redSlider)
+        case greenValueTF:
+            guard let inputText = checkInputText(greenValueTF) else {
+                return
+            }
+            greenSlider.setValue(inputText, animated: true)
+            greenValueTF.text = String(format: "%.2f", inputText)
+            greenLabel.text = string(from: greenSlider)
+        default:
+            guard let inputText = checkInputText(blueValueTF) else {
+                return
+            }
+            blueSlider.setValue(inputText, animated: true)
+            blueValueTF.text = String(format: "%.2f", inputText)
+            blueLabel.text = string(from: blueSlider)
+        }
+        setColor()
     }
 }
