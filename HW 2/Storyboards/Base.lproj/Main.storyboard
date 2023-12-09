@@ -17,24 +17,27 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <viewLayoutGuide key="safeArea" id="pyr-QV-g56"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
                     <navigationItem key="navigationItem" id="lpD-b3-jJQ">
                         <barButtonItem key="rightBarButtonItem" title="Item" image="square.and.pencil" catalog="system" id="yjg-PZ-86v">
                             <connections>
-                                <segue destination="BYZ-38-t0r" kind="presentation" modalPresentationStyle="fullScreen" id="g4V-ZG-wou"/>
+                                <segue destination="BYZ-38-t0r" kind="presentation" identifier="goToSettings" modalPresentationStyle="fullScreen" id="g4V-ZG-wou"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="view" destination="Vfh-HZ-N1u" id="j2k-Kd-1N3"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ZF7-PW-XGv" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="370" y="133"/>
         </scene>
-        <!--View Controller-->
+        <!--Settings View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="HW_2" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="SettingsViewController" customModule="HW_2" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -128,15 +131,28 @@
                                     </stackView>
                                 </subviews>
                             </stackView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ynD-M1-XcE">
+                                <rect key="frame" x="136.5" y="528.5" width="102" height="55"/>
+                                <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="plain" title="Done">
+                                    <fontDescription key="titleFontDescription" style="UICTFontTextStyleTitle0"/>
+                                </buttonConfiguration>
+                                <connections>
+                                    <action selector="doneButtonAction" destination="BYZ-38-t0r" eventType="touchUpInside" id="6wa-fQ-YUZ"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" red="0.14211790186667489" green="0.29647090467996817" blue="0.5760962034239987" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                         <constraints>
                             <constraint firstItem="IbL-qV-7Kr" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="3Sl-ax-kew"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="IbL-qV-7Kr" secondAttribute="trailing" constant="16" id="MP6-Ew-gbh"/>
+                            <constraint firstItem="ynD-M1-XcE" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="Nnz-J4-6FM"/>
                             <constraint firstItem="LAC-qd-7r8" firstAttribute="top" secondItem="IbL-qV-7Kr" secondAttribute="bottom" constant="53" id="f7g-rF-YuP"/>
                             <constraint firstItem="LAC-qd-7r8" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="kRe-t4-j9O"/>
                             <constraint firstAttribute="trailing" secondItem="LAC-qd-7r8" secondAttribute="trailing" constant="16" id="kq6-Ie-FAn"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="ynD-M1-XcE" secondAttribute="bottom" multiplier="16:14" id="tv9-jo-VRm"/>
                             <constraint firstItem="IbL-qV-7Kr" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="34" id="zfq-vN-vjG"/>
                         </constraints>
                     </view>
@@ -175,9 +191,6 @@
     </scenes>
     <resources>
         <image name="square.and.pencil" catalog="system" width="128" height="121"/>
-        <systemColor name="systemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
         <systemColor name="systemGreenColor">
             <color red="0.20392156859999999" green="0.78039215689999997" blue="0.34901960780000002" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
