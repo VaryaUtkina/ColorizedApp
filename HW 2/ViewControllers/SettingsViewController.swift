@@ -136,6 +136,7 @@ extension SettingsViewController: UITextFieldDelegate {
                 return
             }
             redSlider.setValue(inputText, animated: true)
+            redValueTF.text = String(format: "%.2f", inputText)
             redLabel.text = string(from: redSlider)
             setColor()
         case greenValueTF:
@@ -143,6 +144,7 @@ extension SettingsViewController: UITextFieldDelegate {
                 return
             }
             greenSlider.setValue(inputText, animated: true)
+            greenValueTF.text = String(format: "%.2f", inputText)
             greenLabel.text = string(from: greenSlider)
             setColor()
         default:
@@ -150,6 +152,7 @@ extension SettingsViewController: UITextFieldDelegate {
                 return
             }
             blueSlider.setValue(inputText, animated: true)
+            blueValueTF.text = String(format: "%.2f", inputText)
             blueLabel.text = string(from: blueSlider)
             setColor()
         }
@@ -157,23 +160,25 @@ extension SettingsViewController: UITextFieldDelegate {
     
     private func checkInputText(_ textField: UITextField) -> Float? {
         guard let inputText = textField.text, !inputText.isEmpty else {
-            showAlert()
+            showAlert(textField)
             return nil
         }
         guard let text = textField.text, let inputText = Float(text), inputText <= 1 else {
-            showAlert()
+            showAlert(textField)
             return nil
         }
         return inputText
     }
     
-    private func showAlert() {
+    private func showAlert(_ editingTF: UITextField) {
         let alert = UIAlertController(
             title: "Wrong format!",
             message: "Please enter correct value",
             preferredStyle: .alert
         )
-        let okAction = UIAlertAction(title: "OK", style: .default)
+        let okAction = UIAlertAction(title: "OK", style: .default) { _ in
+            editingTF.becomeFirstResponder()
+        }
         alert.addAction(okAction)
         present(alert, animated:  true)
     }
