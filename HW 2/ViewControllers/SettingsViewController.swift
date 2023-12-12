@@ -9,7 +9,7 @@
 import UIKit
 
 final class SettingsViewController: UIViewController {
-    
+    // MARK: - IB Outlets
     @IBOutlet var colorView: UIView!
 
     @IBOutlet var redLabel: UILabel!
@@ -24,30 +24,25 @@ final class SettingsViewController: UIViewController {
     @IBOutlet var greenValueTF: UITextField!
     @IBOutlet var blueValueTF: UITextField!
     
+    // MARK: - Public Properties
+    unowned var delegate: SettingsViewControllerDelegate!
     var viewBackgroundColor: UIColor!
     
-    weak var delegate: SettingsViewControllerDelegate?
-    
+    // MARK: - View Life Circle
     override func viewDidLoad() {
         super.viewDidLoad()
         
         colorView.layer.cornerRadius = 15
-        
-        updateColor()
-        
-        redLabel.text = string(from: redSlider)
-        greenLabel.text = string(from: greenSlider)
-        blueLabel.text = string(from: blueSlider)
+         
+        colorView.backgroundColor = viewBackgroundColor
+        setValue(for: redSlider, greenSlider, blueSlider)
+        setValue(for: redLabel, greenLabel, blueLabel)
+        setValue(for: redValueTF, greenValueTF, blueValueTF)
         
         redValueTF.delegate = self
         greenValueTF.delegate = self
         blueValueTF.delegate = self
         
-        redValueTF.text = string(from: redSlider)
-        greenValueTF.text = string(from: greenSlider)
-        blueValueTF.text = string(from: blueSlider)
-        
-        setupToolbar()
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -55,9 +50,8 @@ final class SettingsViewController: UIViewController {
         view.endEditing(true)
     }
     
+    // MARK: - IB Action
     @IBAction func sliderAction(_ sender: UISlider) {
-        setColor()
-        
         switch sender {
         case redSlider:
             redLabel.text = string(from: redSlider)
@@ -69,6 +63,8 @@ final class SettingsViewController: UIViewController {
             blueLabel.text = string(from: blueSlider)
             blueValueTF.text = string(from: blueSlider)
         }
+        
+        setColor()
     }
     
     @IBAction func doneButtonAction() {
@@ -80,16 +76,7 @@ final class SettingsViewController: UIViewController {
         view.endEditing(true)
     }
     
-    private func updateColor() {
-        let ciColor = CIColor(color: viewBackgroundColor)
-
-        redSlider.value = Float(ciColor.red)
-        greenSlider.value = Float(ciColor.green)
-        blueSlider.value = Float(ciColor.blue)
-        
-        setColor()
-    }
-    
+    // MARK: - Private Methods
     private func setColor() {
         colorView.backgroundColor = UIColor(
             red: redSlider.value.cgFloat(),
@@ -99,52 +86,49 @@ final class SettingsViewController: UIViewController {
         )
     }
     
+    private func setValue(for labels: UILabel...) {
+        labels.forEach { label in
+            switch label {
+            case redLabel: label.text = string(from: redSlider)
+            case greenLabel: label.text = string(from: greenSlider)
+            default: label.text = string(from: blueSlider)
+            }
+        }
+    }
+    
+    private func setValue(for textFields: UITextField...) {
+        textFields.forEach { textField in
+            switch textField {
+            case redValueTF: textField.text = string(from: redSlider)
+            case greenValueTF: textField.text = string(from: greenSlider)
+            default: textField.text = string(from: blueSlider)
+            }
+        }
+    }
+    
+    private func setValue(for colorSliders: UISlider...) {
+        let ciColor = CIColor(color: viewBackgroundColor)
+        colorSliders.forEach { slider in
+            switch slider {
+            case redSlider: redSlider.value = Float(ciColor.red)
+            case greenSlider: greenSlider.value = Float(ciColor.green)
+            default: blueSlider.value = Float(ciColor.blue)
+            }
+        }
+    }
+    
     private func string(from slider: UISlider) -> String {
         String(format: "%.2f", slider.value)
     }
     
-    private func setupToolbar() {
-        let toolbar = UIToolbar()
-        let flexibleSpace = UIBarButtonItem(
-            barButtonSystemItem: .flexibleSpace,
-            target: self,
-            action: nil
-        )
-        let doneButton = UIBarButtonItem(
-            barButtonSystemItem: .done,
-            target: self,
-            action: #selector(doneButtonTapped)
-        )
-        toolbar.items = [flexibleSpace, doneButton]
-        toolbar.sizeToFit()
-        redValueTF.inputAccessoryView = toolbar
-        greenValueTF.inputAccessoryView = toolbar
-        blueValueTF.inputAccessoryView = toolbar
-    }
-    
-    private func checkInputText(_ textField: UITextField) -> Float? {
-        guard let inputText = textField.text, !inputText.isEmpty else {
-            showAlert(textField)
-            return nil
-        }
-        guard let text = textField.text, let inputText = Float(text), inputText <= 1 else {
-            showAlert(textField)
-            return nil
-        }
-        return inputText
-    }
-    
-    private func showAlert(_ editingTF: UITextField) {
-        let alert = UIAlertController(
-            title: "Wrong format!",
-            message: "Please enter correct value",
-            preferredStyle: .alert
-        )
+    private func showAlert(withTitle title: String, andMessage message: String, textField: UITextField? = nil) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         let okAction = UIAlertAction(title: "OK", style: .default) { _ in
-            editingTF.becomeFirstResponder()
+            textField?.text = "0.50"
+            textField?.becomeFirstResponder()
         }
         alert.addAction(okAction)
-        present(alert, animated:  true)
+        present(alert, animated: true)
     }
 }
 
@@ -154,31 +138,53 @@ extension Float {
     }
 }
 
+// MARK: - UITextFieldDelegate
 extension SettingsViewController: UITextFieldDelegate {
     func textFieldDidEndEditing(_ textField: UITextField) {
+        guard let text = textField.text else {
+            showAlert(withTitle: "Wrong format!", andMessage: "Please enter correct value")
+            return
+        }
+        guard let currentValue = Float(text), (0...1).contains(currentValue) else {
+            showAlert(
+                withTitle: "Wrong format!",
+                andMessage: "Please enter correct value",
+                textField: textField
+            )
+            return
+        }
+        
         switch textField {
         case redValueTF:
-            guard let inputText = checkInputText(redValueTF) else {
-                return
-            }
-            redSlider.setValue(inputText, animated: true)
-            redValueTF.text = String(format: "%.2f", inputText)
-            redLabel.text = string(from: redSlider)
+            redSlider.setValue(currentValue, animated: true)
+            setValue(for: redLabel)
         case greenValueTF:
-            guard let inputText = checkInputText(greenValueTF) else {
-                return
-            }
-            greenSlider.setValue(inputText, animated: true)
-            greenValueTF.text = String(format: "%.2f", inputText)
-            greenLabel.text = string(from: greenSlider)
+            greenSlider.setValue(currentValue, animated: true)
+            setValue(for: greenLabel)
         default:
-            guard let inputText = checkInputText(blueValueTF) else {
-                return
-            }
-            blueSlider.setValue(inputText, animated: true)
-            blueValueTF.text = String(format: "%.2f", inputText)
-            blueLabel.text = string(from: blueSlider)
+            blueSlider.setValue(currentValue, animated: true)
+            setValue(for: blueLabel)
         }
+        
         setColor()
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        let toolbar = UIToolbar()
+        toolbar.sizeToFit()
+        textField.inputAccessoryView = toolbar
+        
+        let flexibleSpace = UIBarButtonItem(
+            barButtonSystemItem: .flexibleSpace,
+            target: nil,
+            action: nil
+        )
+        let doneButton = UIBarButtonItem(
+            barButtonSystemItem: .done,
+            target: textField,
+            action: #selector(resignFirstResponder)
+        )
+        
+        toolbar.items = [flexibleSpace, doneButton]
     }
 }
