@@ -72,10 +72,6 @@ final class SettingsViewController: UIViewController {
         dismiss(animated: true)
     }
     
-    @objc func doneButtonTapped() {
-        view.endEditing(true)
-    }
-    
     // MARK: - Private Methods
     private func setColor() {
         colorView.backgroundColor = UIColor(
