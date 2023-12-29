@@ -63,7 +63,6 @@ final class SettingsViewController: UIViewController {
             blueLabel.text = string(from: blueSlider)
             blueValueTF.text = string(from: blueSlider)
         }
-        
         setColor()
     }
     
